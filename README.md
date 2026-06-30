@@ -7,6 +7,7 @@ before writing any scene, so characters, world rules, power systems and timeline
 consistent from page 1 to page 1000.
 
 > **Start with [`CHEATSHEET.md`](./CHEATSHEET.md).** This README explains the machinery.
+> In a hurry? **[`QUICKSTART.md`](./QUICKSTART.md)** takes you from zero to a linted scene in 5 minutes.
 
 ---
 
@@ -27,6 +28,7 @@ editor, any git repo, any RAG pipeline, and any AI tool.
 ```
 comic-canon/
 ├── CHEATSHEET.md              ← the quality bar + scenario-error rules (read first)
+├── QUICKSTART.md              ← zero to your first linted scene in 5 minutes
 ├── README.md                  ← you are here
 │
 ├── canon/                     ← IMMUTABLE TRUTH. Scenes read this; they never invent it.
@@ -38,23 +40,28 @@ comic-canon/
 │   ├── glossary.md            ← locked spelling of every proper noun / coined term
 │   └── characters/
 │       ├── _TEMPLATE.md       ← blank character sheet (copy per character)  CHR-###
-│       ├── _VISUAL-GUIDE.md   ← how to build a character's visual reference + prompt DNA
-│       └── CHR-001_example.md ← worked example
+│       └── _VISUAL-GUIDE.md   ← how to build a character's visual reference + prompt DNA
 │
 ├── structure/
 │   └── arc.md                 ← beat map: Hero's Journey + kishōtenketsu  (ARC-##, beats)
 │
 ├── scenes/                    ← THE STORY. One file per scene.  S{arc}-{seq}
-│   ├── _TEMPLATE.md           ← blank scene file (the most important template)
-│   └── S01-001_example.md     ← worked example showing refs / tags / state deltas
+│   └── _TEMPLATE.md           ← blank scene file (the most important template)
 │
 ├── validation/
 │   ├── continuity-rules.md    ← the lint rules (human + machine readable)
 │   └── payoff-ledger.md       ← setup → payoff tracking (Chekhov's gun)
 │
-└── schema/
-    ├── scene.schema.json      ← validate scene frontmatter
-    └── character.schema.json  ← validate character frontmatter
+├── schema/
+│   ├── scene.schema.json      ← validate scene frontmatter
+│   └── character.schema.json  ← validate character frontmatter
+│
+├── tools/                     ← automation (plain Python, no framework)
+│   ├── lint.py                ← the continuity linter (v0.2): schema + R1/R9/R12
+│   └── new-story.py           ← scaffold a fresh story from the blank template
+│
+└── examples/
+    └── the-wardens-coin/      ← a complete, lint-clean 6-scene story bible to study
 ```
 
 ---
@@ -109,19 +116,27 @@ legitimate change (the FACTTRACK idea):
 2. **Map the arc** in `structure/arc.md`.
 3. For each scene: copy `scenes/_TEMPLATE.md`, fill frontmatter, **assemble only the relevant
    canon** (see Cheatsheet §7), generate, then **write the `state_changes` back**.
-4. **Lint** against `validation/continuity-rules.md` before locking the scene.
+4. **Lint** — run `python tools/lint.py .` (enforces the machine-checkable rules and prints the
+   ones a human still has to check) before locking the scene.
 5. **Update the ledger + timeline + character state** so the next scene inherits reality.
+
+See [`QUICKSTART.md`](./QUICKSTART.md) for the copy-paste version, and
+[`examples/the-wardens-coin/`](./examples/the-wardens-coin/) for the whole loop worked end to end.
 
 ---
 
 ## Roadmap (open-source)
 
-- v0.1 — this template (manual lint).
-- v0.2 — a CLI linter that parses frontmatter and enforces `continuity-rules.md`.
+- v0.1 — the template (manual lint).
+- v0.2 — ✅ **shipped:** a CLI linter (`tools/lint.py`) that parses frontmatter and enforces the
+  machine-checkable subset of `continuity-rules.md` (schema + R1/R9/R12), with a `new-story.py`
+  scaffold and a complete worked example.
 - v0.3 — RAG packer that auto-assembles per-scene context from IDs in the frontmatter.
 - v0.4 — visual-canon pack: reference-image manifest + prompt-DNA injector for panel gen.
+- later — deepen the linter toward the prose rules (R3 validity windows, R4 temporal order).
 
-PRs welcome. Keep canon and narrative separate; keep IDs stable; never let a scene invent a fact.
+PRs welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md). Keep canon and narrative separate; keep
+IDs stable; never let a scene invent a fact.
 
 ---
 

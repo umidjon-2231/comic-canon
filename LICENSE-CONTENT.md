@@ -5,7 +5,7 @@ cheatsheet, README, rules, glossary/world/character/scene prose, and any example
 story material — is licensed under the **Creative Commons Attribution 4.0
 International License (CC BY 4.0)**.
 
-> Copyright (c) 2026 Comic Canon contributors
+> Copyright (c) 2026 Tojiboyev Umidjon
 
 You are free to:
 
@@ -38,5 +38,5 @@ using it are your own work — license them however you like.
 
 ## Suggested attribution
 
-> Built with [Comic Canon](https://github.com/your-org/comic-canon), © Comic Canon
-> contributors, CC BY 4.0.
+> Built with [Comic Canon](https://github.com/umidjon-2231/comic-canon), © Tojiboyev Umidjon,
+> CC BY 4.0.

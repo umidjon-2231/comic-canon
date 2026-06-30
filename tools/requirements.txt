@@ -1,0 +1,4 @@
+# Dependencies for tools/lint.py (the v0.2 continuity linter).
+# Install:  pip install -r tools/requirements.txt
+pyyaml>=6.0
+jsonschema>=4.0

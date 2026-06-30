@@ -4,15 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-This is **not a software project** — there is no source code, build system, package manager, or
-test runner. It is a **story-bible template**: a folder of plain Markdown + JSON Schema that acts
-as a single source of truth an AI (or human team) reads before writing any scene of a long-form
-comic/manga, so facts, characters, power rules, and timeline stay consistent across hundreds of
-pages.
+This is **primarily not a software project** — it is a **story-bible template**: a folder of plain
+Markdown + JSON Schema that acts as a single source of truth an AI (or human team) reads before
+writing any scene of a long-form comic/manga, so facts, characters, power rules, and timeline stay
+consistent across hundreds of pages. The only code is a small Python helper layer in `tools/`
+(`lint.py`, the continuity linter; `new-story.py`, the scaffold) — no build system or app runtime.
 
 When asked to "work in this repo," the work is almost always one of: filling in a canon file,
-authoring a scene, validating continuity, or extending the template/schema/rules — **not** writing
-application code. Read `CHEATSHEET.md` first (the quality bar), then `README.md` (the machinery).
+authoring a scene, validating continuity, or extending the template/schema/rules (occasionally the
+linter) — **not** writing application code. Read `CHEATSHEET.md` first (the quality bar), then
+`README.md` (the machinery). A complete worked story lives in `examples/the-wardens-coin/`.
 
 ## The one principle that governs everything
 
@@ -56,8 +57,9 @@ The two JSON Schemas in `schema/` define the required fields:
 true *between two scene IDs*. A character's `status_intervals[]` and the relationship tables carry
 `valid_from`/`valid_until` (where `null` = still true). This is what lets a fact legitimately
 change (ally→enemy, alive→dead) without the linter flagging it as a contradiction — and it is the
-single most important concept to preserve when editing canon. Example, from `CHR-001_example.md`:
-`Sael is an ally [valid_from: S01-004, valid_until: S02-010]`; after S02-010 he is an enemy.
+single most important concept to preserve when editing canon. Example, from
+`examples/the-wardens-coin/canon/characters/CHR-001_Kai.md`: Kai's bond to Sael is
+`unknown hunter [valid_from: S01-001, valid_until: S01-005]`; from S01-005 it becomes `named enemy`.
 
 ## The writing loop (how scenes get authored)
 
@@ -66,19 +68,24 @@ single most important concept to preserve when editing canon. Example, from `CHR
 3. **Per scene:** copy `scenes/_TEMPLATE.md`, fill the frontmatter, **assemble only the relevant
    canon** (see "Context assembly" below — do NOT paste the whole bible), draft, then write the
    `state_changes` array (what the next scene inherits).
-4. **Lint** against `validation/continuity-rules.md` before setting `status: locked`.
+4. **Lint** — run `python tools/lint.py <story-dir>` (machine checks) plus a human pass of
+   `validation/continuity-rules.md` before setting `status: locked`.
 5. **Write-back rule:** the moment a scene locks, propagate its `state_changes` into canon —
    timeline events, character status logs, relationship intervals, item states, payoff-ledger rows.
    *Stale canon is the seed of tomorrow's contradiction.* This step is mandatory, not optional.
 
-## Validation (manual today — there is no linter binary)
+## Validation (linter v0.2 + a human pass)
 
-Validation is currently a **manual pass**, not a script (a CLI linter is roadmap v0.2). When asked
-to "lint" or "check continuity," apply the rules in `validation/continuity-rules.md` (R1–R12),
-which map one-to-one to the error taxonomy in `CHEATSHEET.md §2` (E1–E12). The high-value checks:
+`tools/lint.py` automates the machine-checkable subset: JSON-Schema validation of scene/character
+frontmatter, **R1** (entity existence), **R9** (setup/payoff integrity), **R12** (scene earns its
+place), and ID format/uniqueness. Run `python tools/lint.py <story-dir>`; it exits non-zero on
+errors and **prints the rules it cannot judge** (R2, R5, R6, R7, R8, R11) so you still apply those
+by hand. The rules in `validation/continuity-rules.md` (R1–R12) map one-to-one to the error
+taxonomy in `CHEATSHEET.md §2` (E1–E12). The high-value checks:
 
 - **R1 entity existence** — every ID in `present`/`mentioned`/`location`/`refs`/panel text must
-  resolve to a file in `/canon`.
+  resolve to a registered entity in `/canon` (a file, or a registered section/row — see the
+  "Defined in" column of the ID table in `README.md`).
 - **R3 validity window** — a scene must not rely on a fact outside its `valid_from→valid_until`.
 - **R6/R7 power legality & ledger** — every ability used must exist in `02-power-system.md`, be one
   the character has, pay its on-page cost, and not exceed the character's logged tier without a
@@ -105,8 +112,9 @@ the model's fading memory — is the whole point.
   the most-used.
 - `_VISUAL-GUIDE.md` — visual-canon rules (design-DNA strings, palette locks, style token) to keep
   AI-generated panel art on-model.
-- `*_example.md` (e.g. `CHR-001_example.md`, `S01-001_example.md`) — worked, lint-clean examples.
-  They are illustrative and meant to be deleted when a real story starts.
+- Worked examples live under `examples/` — a complete, lint-clean story bible per folder
+  (`examples/the-wardens-coin/`), kept separate from the blank template so the top-level dirs stay
+  copy-ready. The template dirs themselves hold only `_TEMPLATE.md` / `_VISUAL-GUIDE.md`.
 
 ## When extending the template
 

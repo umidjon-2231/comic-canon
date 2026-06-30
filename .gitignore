@@ -1,0 +1,25 @@
+# ── OS junk ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Editors / IDEs ───────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*~
+
+# ── Python (future linter / tooling) ─────────────────────
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# ── Node (future tooling) ────────────────────────────────
+node_modules/
+
+# ── Private drafts ───────────────────────────────────────
+# Keep work-in-progress canon/scenes you don't want to publish under here:
+# drafts/
