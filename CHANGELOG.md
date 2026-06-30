@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-01
+
 ### Added
 
 - **Continuity linter** (`tools/lint.py`, v0.2): validates scene/character frontmatter against the
@@ -49,5 +51,6 @@ Initial release of the story-bible template.
 - **Templates and worked examples** for characters and scenes, plus a visual-canon guide.
 - **Dual license**: MIT for code/schemas, CC BY 4.0 for the templates and documentation.
 
-[Unreleased]: https://github.com/umidjon-2231/comic-canon/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/umidjon-2231/comic-canon/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/umidjon-2231/comic-canon/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/umidjon-2231/comic-canon/releases/tag/v0.1.0

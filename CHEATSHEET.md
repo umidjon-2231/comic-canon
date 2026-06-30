@@ -125,7 +125,7 @@ premise.md  +  world.md (relevant sections)  +  power-system.md
 + glossary (always)
 ```
 
-This mirrors the retrieval-augmented approach that pushed state consistency toward 98% in the research: **structured canon + episode summaries + key-item tracking**, retrieved per scene, instead of one giant context blob. It also fights mid-story drift (where errors cluster) because each scene is regrounded in canon rather than relying on the model's fading memory.
+This mirrors the retrieval-augmented approach in recent work on long-form coherence — notably **SCORE** (Yi et al., 2025, [arXiv:2503.23512](https://arxiv.org/abs/2503.23512)), which pairs per-entity **state tracking** with **RAG** and reports large gains in *item-state* consistency: **structured canon + episode summaries + key-item tracking**, retrieved per scene, instead of one giant context blob. It also fights mid-story drift (where errors cluster) because each scene is regrounded in canon rather than relying on the model's fading memory.
 
 ---
 
