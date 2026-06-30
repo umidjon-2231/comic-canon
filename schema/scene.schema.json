@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://comic-canon/schema/scene.schema.json",
+  "title": "Scene",
+  "description": "Validates the YAML frontmatter of a scene file in /scenes.",
+  "type": "object",
+  "required": [
+    "id", "type", "status", "arc", "scene_type",
+    "in_world_time", "location", "present",
+    "pov", "goal", "conflict", "outcome", "value_turn", "state_changes"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "pattern": "^S[0-9]{2}-[0-9]{3}$" },
+    "type": { "const": "scene" },
+    "status": { "enum": ["draft", "revised", "locked"] },
+    "arc": { "type": "string", "pattern": "^ARC-[0-9]{2}$" },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "scene_type": { "enum": ["main", "character", "setup", "payoff", "filler"] },
+    "in_world_time": { "type": "string" },
+    "location": { "type": "string", "pattern": "^LOC-[0-9]{3}$" },
+    "present": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^CHR-[0-9]{3}$" },
+      "minItems": 1
+    },
+    "mentioned": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(CHR|LOC|FAC|ITM|PWR)-[0-9]{3}$" }
+    },
+    "refs": {
+      "type": "object",
+      "properties": {
+        "follows": { "type": ["string", "null"], "pattern": "^S[0-9]{2}-[0-9]{3}$" },
+        "callbacks": { "type": "array", "items": { "type": "string", "pattern": "^S[0-9]{2}-[0-9]{3}$" } },
+        "setups": { "type": "array", "items": { "type": "string", "pattern": "^SP-[0-9]{3}$" } },
+        "payoffs": { "type": "array", "items": { "type": "string", "pattern": "^SP-[0-9]{3}$" } }
+      }
+    },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "pov": { "type": "string", "pattern": "^CHR-[0-9]{3}$" },
+    "goal": { "type": "string", "minLength": 1 },
+    "conflict": { "type": "string", "minLength": 1 },
+    "outcome": { "type": "string", "minLength": 1 },
+    "value_turn": { "type": "string", "minLength": 1 },
+    "state_changes": {
+      "type": "array",
+      "description": "What the next scene inherits. May be empty only for pure filler.",
+      "items": { "type": "string" }
+    }
+  }
+}
