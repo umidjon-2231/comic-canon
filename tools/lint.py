@@ -42,6 +42,8 @@ except ImportError:
 
 import json
 
+from canonlib import PLACEHOLDER, is_template, parse_frontmatter, use_utf8_io
+
 # --- ID patterns -------------------------------------------------------------
 ID_PATTERNS = {
     "CHR": re.compile(r"^CHR-\d{3}$"),
@@ -54,8 +56,6 @@ ID_PATTERNS = {
     "SCN": re.compile(r"^S\d{2}-\d{3}$"),
     "SP":  re.compile(r"^SP-\d{3}$"),
 }
-# IDs ending in the placeholder slot are template scaffolding, not real entities.
-PLACEHOLDER = re.compile(r"-(000)$|^S00-000$")
 
 SECTION_ID = re.compile(r"^#{2,4}\s+((?:LOC|FAC|PWR|ITM)-\d{3})\b", re.M)
 ANY_EVT = re.compile(r"\bEVT-\d{3}\b")
@@ -72,26 +72,6 @@ class Report:
 
     def warn(self, where: str, msg: str) -> None:
         self.warnings.append(f"  [warn]  {where}: {msg}")
-
-
-def parse_frontmatter(path: Path) -> dict | None:
-    """Return the YAML frontmatter dict, or None if the file has none."""
-    text = path.read_text(encoding="utf-8")
-    if not text.startswith("---"):
-        return None
-    parts = text.split("\n---", 1)
-    if len(parts) < 2:
-        return None
-    body = parts[0][3:]  # drop leading '---'
-    try:
-        data = yaml.safe_load(body)
-    except yaml.YAMLError as exc:
-        raise ValueError(f"invalid YAML frontmatter: {exc}") from exc
-    return data if isinstance(data, dict) else None
-
-
-def is_template(path: Path) -> bool:
-    return path.name.startswith("_")
 
 
 def collect_ids(text: str, pattern: re.Pattern) -> set[str]:
@@ -293,6 +273,7 @@ def main() -> int:
     ap.add_argument("--schema", default=None,
                     help="schema dir (default: the repo's schema/ next to this script)")
     args = ap.parse_args()
+    use_utf8_io()
 
     root = Path(args.root).resolve()
     schema_dir = Path(args.schema).resolve() if args.schema else Path(__file__).resolve().parent.parent / "schema"

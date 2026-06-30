@@ -43,8 +43,15 @@ that's what makes the bible checkable. See the ID table in [`README.md`](./READM
 cp scenes/_TEMPLATE.md scenes/S01-001.md
 ```
 
-Fill the frontmatter (`location`, `present`, `pov`, `goal`, `conflict`, `outcome`, `value_turn`),
-draft the panels, then write the `state_changes` — what the next scene inherits.
+Fill the frontmatter (`location`, `present`, `pov`, `goal`, `conflict`, `outcome`, `value_turn`).
+Then let the tooling assemble *only* the canon this scene needs and hand it to any AI:
+
+```bash
+python <path-to>/comic-canon/tools/pack.py S01-001 --root . > bundle.md
+```
+
+Pair that bundle with `agents/scene-drafter.md` (a portable spec that works with any AI) to draft
+in-canon, then write the `state_changes` — what the next scene inherits.
 
 ## 5. Lint before you lock it
 

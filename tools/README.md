@@ -18,6 +18,26 @@ scene earns its place), and ID/format/uniqueness. It prints — but cannot judge
 rules (R2, R5, R6, R7, R8, R11); those still need a human. Exit code is non-zero on any error,
 so it drops straight into CI.
 
+## `pack.py` — the context-packer (v0.3)
+
+Assembles the **minimal** canon for one scene into a single bundle you feed to any AI — the
+"context assembly" step from `CHEATSHEET.md §7`, as a deterministic tool. No model, no network.
+
+```bash
+python tools/pack.py S01-005 --root examples/the-wardens-coin            # to stdout
+python tools/pack.py S01-005 --root examples/the-wardens-coin --out b.md # to a file
+python tools/pack.py S01-005 --root examples/the-wardens-coin --review   # include the draft
+```
+
+It pulls only what scene N needs: the scene's intent, premise, the relevant world/power slices,
+full sheets for everyone `present`, the previous scene's `state_changes`, summaries of referenced
+scenes, the open setups, and the glossary. The `agents/` specs consume this bundle.
+
+## `canonlib.py` — shared parsing library
+
+Frontmatter parsing and Markdown section-slicing used by both `lint.py` and `pack.py`, so there's
+one source of truth. Not run directly.
+
 ## `new-story.py` — scaffold a fresh story
 
 Copies the blank template (canon/scenes/structure/validation/schema) into a new directory,

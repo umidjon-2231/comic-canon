@@ -8,7 +8,9 @@ This is **primarily not a software project** — it is a **story-bible template*
 Markdown + JSON Schema that acts as a single source of truth an AI (or human team) reads before
 writing any scene of a long-form comic/manga, so facts, characters, power rules, and timeline stay
 consistent across hundreds of pages. The only code is a small Python helper layer in `tools/`
-(`lint.py`, the continuity linter; `new-story.py`, the scaffold) — no build system or app runtime.
+(`lint.py`, the continuity linter; `pack.py`, the per-scene context-packer; `new-story.py`, the
+scaffold; `canonlib.py`, shared parsing) plus provider-agnostic agent specs in `agents/` — no build
+system or app runtime.
 
 When asked to "work in this repo," the work is almost always one of: filling in a canon file,
 authoring a scene, validating continuity, or extending the template/schema/rules (occasionally the
@@ -104,7 +106,9 @@ To generate scene N, assemble only: `premise.md` + relevant sections of `world.m
 `power-system.md` + character sheets for everyone `present` in scene N + the previous scene's
 `state_changes` + summaries of scenes in `refs` + open setups from the payoff-ledger that could pay
 off here + the glossary (always). Regrounding each scene in retrieved canon — instead of trusting
-the model's fading memory — is the whole point.
+the model's fading memory — is the whole point. **This is automated:** `python tools/pack.py
+<scene-id> --root <story>` emits exactly this bundle, and the provider-agnostic specs in `agents/`
+(usable with any AI) consume it.
 
 ## File-naming conventions
 

@@ -57,8 +57,16 @@ comic-canon/
 │   └── character.schema.json  ← validate character frontmatter
 │
 ├── tools/                     ← automation (plain Python, no framework)
+│   ├── canonlib.py            ← shared canon-parsing library
 │   ├── lint.py                ← the continuity linter (v0.2): schema + R1/R9/R12
+│   ├── pack.py                ← context-packer (v0.3): per-scene canon bundle for any AI
 │   └── new-story.py           ← scaffold a fresh story from the blank template
+│
+├── agents/                    ← provider-agnostic agent specs (use with ANY AI)
+│   ├── README.md              ← the loop, automated; how the agents chain
+│   ├── scene-drafter.md       ← drafts a scene from a pack.py bundle
+│   ├── continuity-reviewer.md ← finds errors lint.py can't (R2/R5/R6/R7/R8/R11)
+│   └── canon-keeper.md        ← writes a locked scene's state_changes back into canon
 │
 └── examples/
     └── the-wardens-coin/      ← a complete, lint-clean 6-scene story bible to study
@@ -131,9 +139,12 @@ See [`QUICKSTART.md`](./QUICKSTART.md) for the copy-paste version, and
 - v0.2 — ✅ **shipped:** a CLI linter (`tools/lint.py`) that parses frontmatter and enforces the
   machine-checkable subset of `continuity-rules.md` (schema + R1/R9/R12), with a `new-story.py`
   scaffold and a complete worked example.
-- v0.3 — RAG packer that auto-assembles per-scene context from IDs in the frontmatter.
+- v0.3 — ✅ **shipped:** a context-packer (`tools/pack.py`) that auto-assembles per-scene canon
+  from the frontmatter IDs, plus a provider-agnostic `agents/` layer (works with any AI) covering
+  the full loop — `scene-drafter`, `continuity-reviewer`, `canon-keeper`.
 - v0.4 — visual-canon pack: reference-image manifest + prompt-DNA injector for panel gen.
-- later — deepen the linter toward the prose rules (R3 validity windows, R4 temporal order).
+- later — deeper linting (R3 validity windows, R4 temporal order) so the reviewer leans less on a
+  human.
 
 PRs welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md). Keep canon and narrative separate; keep
 IDs stable; never let a scene invent a fact.
