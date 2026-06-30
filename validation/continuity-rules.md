@@ -17,7 +17,11 @@ For each scene, top to bottom, verify every rule. Any failure = fix before `stat
 
 **R1 · Entity existence (E1)**
 Every ID in `present`, `mentioned`, `location`, `refs`, and the panel text must resolve to a
-file in `/canon`. No loose names for canonical things.
+**registered entity** in `/canon` — either a file (`CHR-###` in `characters/`, `S##-###` in
+`scenes/`) or a registered section/row: `LOC-###`/`FAC-###` in `01-world.md`, `PWR-###` in
+`02-power-system.md`, `ITM-###` in `items.md`, `EVT-###` in `timeline.md`, `SP-###` in the
+payoff-ledger. (See the "Defined in" column of the ID table in `README.md`.) No loose names for
+canonical things.
 
 **R2 · Fact match (E2)**
 Any character detail stated in the scene (appearance, age, name) must match the character

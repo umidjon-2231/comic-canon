@@ -35,10 +35,10 @@ what makes the bible machine-checkable and RAG-able. The schemas enforce these e
 |--------|-------|---------|
 | `CHR-###` | Character | `^CHR-[0-9]{3}$` |
 | `LOC-###` | Location | `^LOC-[0-9]{3}$` |
-| `FAC-###` | Faction | |
-| `PWR-###` | Power/ability | |
-| `ITM-###` | Item/artifact | |
-| `EVT-###` | Timeline event | |
+| `FAC-###` | Faction | `^FAC-[0-9]{3}$` (defined in `canon/01-world.md`) |
+| `PWR-###` | Power/ability | `^PWR-[0-9]{3}$` (defined in `canon/02-power-system.md`) |
+| `ITM-###` | Item/artifact | `^ITM-[0-9]{3}$` (defined in `canon/items.md`) |
+| `EVT-###` | Timeline event | `^EVT-[0-9]{3}$` (defined in `canon/timeline.md`) |
 | `ARC-##` | Story arc | `^ARC-[0-9]{2}$` |
 | `S{arc}-{seq}` | Scene | `^S[0-9]{2}-[0-9]{3}$` (e.g. `S01-014`) |
 | `SP-###` | Setup→payoff pair | `^SP-[0-9]{3}$` |

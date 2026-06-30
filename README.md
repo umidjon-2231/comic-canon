@@ -34,6 +34,7 @@ comic-canon/
 │   ├── 01-world.md            ← setting, tone, rules of reality, factions, locations
 │   ├── 02-power-system.md     ← the strength system (built to Sanderson's Laws)
 │   ├── timeline.md            ← canonical chronology, in-world dates  (EVT-###)
+│   ├── items.md               ← plot-relevant objects + their state over time  (ITM-###)
 │   ├── glossary.md            ← locked spelling of every proper noun / coined term
 │   └── characters/
 │       ├── _TEMPLATE.md       ← blank character sheet (copy per character)  CHR-###
@@ -61,19 +62,21 @@ comic-canon/
 ## The ID scheme (the linchpin)
 
 Every canonical thing gets a **stable ID**. Scenes reference things by ID, never by loose name.
-This is what makes the story searchable, RAG-able, and machine-checkable.
+This is what makes the story searchable, RAG-able, and machine-checkable. The **Defined in**
+column is the keystone of rule R1: it's where each ID must resolve to, for a human or the
+linter to confirm the thing actually exists.
 
-| Prefix | Thing | Example |
-|--------|-------|---------|
-| `CHR-###` | Character | `CHR-001` |
-| `LOC-###` | Location | `LOC-004` |
-| `FAC-###` | Faction / organization | `FAC-002` |
-| `PWR-###` | Power / ability | `PWR-007` |
-| `ITM-###` | Item / artifact | `ITM-003` |
-| `EVT-###` | Timeline event | `EVT-012` |
-| `ARC-##`  | Story arc | `ARC-02` |
-| `S{arc}-{seq}` | Scene | `S01-014` |
-| `SP-###`  | Setup→payoff pair | `SP-005` |
+| Prefix | Thing | Example | Defined in |
+|--------|-------|---------|------------|
+| `CHR-###` | Character | `CHR-001` | one file per character in `canon/characters/` |
+| `LOC-###` | Location | `LOC-004` | a section in `canon/01-world.md` |
+| `FAC-###` | Faction / organization | `FAC-002` | a section in `canon/01-world.md` |
+| `PWR-###` | Power / ability | `PWR-007` | a section in `canon/02-power-system.md` |
+| `ITM-###` | Item / artifact | `ITM-003` | a section in `canon/items.md` |
+| `EVT-###` | Timeline event | `EVT-012` | a row in `canon/timeline.md` |
+| `ARC-##`  | Story arc | `ARC-02` | `structure/arc.md` |
+| `S{arc}-{seq}` | Scene | `S01-014` | one file per scene in `scenes/` |
+| `SP-###`  | Setup→payoff pair | `SP-005` | a row in `validation/payoff-ledger.md` |
 
 ---
 
@@ -122,4 +125,14 @@ PRs welcome. Keep canon and narrative separate; keep IDs stable; never let a sce
 
 ---
 
-*License: choose permissive (MIT/CC-BY) when you publish so others can build their own stories on it.*
+## License
+
+This repository is **dual-licensed** so each part carries the license that fits it:
+
+- **Code** — the JSON Schemas in `schema/` (and any scripts/linter added later) are under the
+  **MIT License** ([`LICENSE`](./LICENSE)).
+- **Content** — everything else (the Markdown templates, this README, the cheatsheet, the rules,
+  and all example prose) is under **CC BY 4.0** ([`LICENSE-CONTENT.md`](./LICENSE-CONTENT.md)).
+
+**The stories you write with it are yours.** The dual license covers *the template*, not the
+canon and scenes you author on top of it — those are your own work, licensed however you choose.
