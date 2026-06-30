@@ -13,6 +13,8 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install dependencies
-        run: pip install -r tools/requirements.txt
+        run: pip install -r tools/requirements-dev.txt
       - name: Lint the worked example
         run: python tools/lint.py examples/the-wardens-coin
+      - name: Run the test suite
+        run: pytest -q

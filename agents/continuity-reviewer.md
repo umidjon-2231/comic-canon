@@ -9,8 +9,9 @@ Catch real contradictions; do **not** flag legitimate, interval-bounded change.
 
 ## Inputs
 1. **Machine findings:** the output of `python tools/lint.py <story>` — it already covers schema,
-   **R1** (entity existence), **R9** (setup/payoff), **R12** (scene earns its place). Trust these;
-   don't re-derive them.
+   **R1** (entity existence), the mechanical slice of **R3** (interval integrity + appearance/death
+   gating) and **R4** (temporal order), **R9** (setup/payoff), **R12** (scene earns its place).
+   Trust these; don't re-derive them — you still own the *prose* half of R3 (below).
 2. **The scene + its canon:** a bundle from `python tools/pack.py <scene-id> --review --root <story>`.
    `--review` appends the scene's current draft, so you can check the draft against the canon that
    precedes it.

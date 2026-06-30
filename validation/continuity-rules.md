@@ -31,10 +31,15 @@ sheet exactly. Names must match `glossary.md`. → grep the glossary "forbidden 
 For every fact the scene relies on, the scene's `id` must fall inside that fact's
 `valid_from → valid_until` window. (e.g. don't treat Sael as an ally in a scene after
 `valid_until: S02-010`.)
+*Linter covers the mechanical slice: interval well-formedness (`valid_from ≤ valid_until`), and
+that a character isn't on-page before `first_appears` or after they die. The prose "relies on"
+half stays manual.*
 
 **R4 · Temporal order (E4)**
 Scene `in_world_time` must be ≥ the `in_world_time` of every event it depends on in
 `timeline.md`. No effect before its cause.
+*Linter covers the mechanical slice: `in_world_time` doesn't move backward along the `follows`
+chain (warned, since flashbacks are legal).*
 
 **R5 · Knowledge gating (E5)**
 A character may only act on information their `knowledge state` says they have *by this scene*.

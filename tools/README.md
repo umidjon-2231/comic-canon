@@ -13,10 +13,13 @@ python tools/lint.py                             # lint the current directory
 ```
 
 It checks: schema validity of scene/character frontmatter, **R1** (every referenced ID
-resolves to a registered entity in `/canon`), **R9** (setup/payoff integrity), **R12** (the
-scene earns its place), and ID/format/uniqueness. It prints — but cannot judge — the prose
-rules (R2, R5, R6, R7, R8, R11); those still need a human. Exit code is non-zero on any error,
-so it drops straight into CI.
+resolves to a registered entity in `/canon`), **R3** (interval integrity + a character isn't
+on-page before `first_appears` or after they die), **R4** (`in_world_time` doesn't move backward
+along `follows`), **R9** (setup/payoff integrity), **R12** (the scene earns its place), and
+ID/format/uniqueness. It prints — but cannot judge — the prose rules (R2, R5, R6, R7, R8, R11);
+those still need a human. Exit code is non-zero on any error, so it drops straight into CI.
+
+Tests live in `tests/` — run `pip install -r tools/requirements-dev.txt && pytest -q`.
 
 ## `pack.py` — the context-packer (v0.3)
 

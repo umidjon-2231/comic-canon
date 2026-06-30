@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-01
+
+### Added
+
+- **Linter R3/R4** (the mechanical slices): interval well-formedness (`valid_from ≤ valid_until`),
+  **appearance gating** (a character can't be on-page before `first_appears`), **death gating**
+  (warn), and **temporal order** along the `follows` chain (warn — flashbacks are legal). Moves
+  part of two continuity rules from human-only to machine-checked.
+- **Test suite** (`tests/`, pytest): the worked example as a positive fixture, a negative fixture
+  per rule (R1/R3/R4/R9/R12), and unit tests for `canonlib` and `pack`. Wired into CI via
+  `tools/requirements-dev.txt` and `pytest.ini`.
+
 ## [0.3.0] - 2026-07-01
 
 ### Added
@@ -68,7 +80,8 @@ Initial release of the story-bible template.
 - **Templates and worked examples** for characters and scenes, plus a visual-canon guide.
 - **Dual license**: MIT for code/schemas, CC BY 4.0 for the templates and documentation.
 
-[Unreleased]: https://github.com/umidjon-2231/comic-canon/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/umidjon-2231/comic-canon/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/umidjon-2231/comic-canon/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/umidjon-2231/comic-canon/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/umidjon-2231/comic-canon/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/umidjon-2231/comic-canon/releases/tag/v0.1.0

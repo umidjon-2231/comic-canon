@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-comic-canon linter (v0.2)
+comic-canon linter
 
 Parses the YAML frontmatter of a story bible and enforces the machine-checkable
 subset of validation/continuity-rules.md. It is the automation of the manual
@@ -9,6 +9,10 @@ pass — it does NOT replace human judgement for the prose-level rules.
 What it checks (machine):
   SCHEMA  scene/character frontmatter validates against schema/*.json
   R1      every referenced ID resolves to a registered entity in /canon
+  R3      validity intervals are well-formed, and a character isn't on-page
+          before first_appears or after they die (the mechanical slice of R3)
+  R4      in_world_time doesn't move backwards along the `follows` chain
+          (warned, not failed — flashbacks are legal; the mechanical slice of R4)
   R9      setups open an SP-### in the ledger; payoffs close one opened earlier
   R12     goal/conflict/outcome/value_turn are non-empty and not "nothing"
   IDS     IDs are unique, well-formed, and match their filename
@@ -16,6 +20,7 @@ What it checks (machine):
 What stays MANUAL (printed as reminders, never auto-passed):
   R2 fact match · R5 knowledge gating · R6 power cost on-page ·
   R7 power-ledger cause · R8 geography/logistics · R11 voice
+  (and the prose half of R3: does this scene *lean on* a stale fact?)
 
 Usage:
   python tools/lint.py [STORY_DIR]      # default: current directory
@@ -165,6 +170,68 @@ def load_schema(schema_dir: Path, name: str) -> Draft202012Validator | None:
     return Draft202012Validator(json.loads(fp.read_text(encoding="utf-8")))
 
 
+def _num_time(t) -> float | None:
+    try:
+        return float(str(t).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def check_intervals(chars: dict, scenes_fm: dict, rep: Report) -> None:
+    """R3 (mechanical): appearance gating, death gating, interval well-formedness."""
+    on_page: dict[str, list[str]] = {}  # where each character is physically present
+    for sid, fm in scenes_fm.items():
+        ids = list(fm.get("present") or [])
+        pov = fm.get("pov")
+        if isinstance(pov, str):
+            ids.append(pov)
+        for cid in ids:
+            if isinstance(cid, str):
+                on_page.setdefault(cid, []).append(sid)
+
+    for cid, (fm, fname) in chars.items():
+        appearances = sorted(set(on_page.get(cid, [])))
+        first = fm.get("first_appears")
+
+        # appearance gating (E1/E5): can't be on-page before first_appears
+        if isinstance(first, str) and appearances:
+            before = [s for s in appearances if s < first]
+            if before:
+                rep.error(fname, f"R3 {cid} is on-page in {before[0]} before first_appears {first}")
+            elif appearances[0] != first:
+                rep.warn(fname, f"R3 {cid} first_appears {first} but earliest on-page scene is {appearances[0]}")
+
+        # interval integrity + death gating (E3/E11)
+        for iv in (fm.get("status_intervals") or []):
+            if not isinstance(iv, dict):
+                continue
+            vf, vu = iv.get("valid_from"), iv.get("valid_until")
+            fact = str(iv.get("fact", "")).strip()
+            if isinstance(vf, str) and isinstance(vu, str) and vu < vf:
+                rep.error(fname, f"R3 interval '{fact}': valid_from {vf} is after valid_until {vu}")
+            if fact.lower() == "alive" and isinstance(vu, str):
+                dead_after = [s for s in appearances if s > vu]
+                if dead_after:
+                    rep.warn(fname, f"R3 {cid} is no longer alive after {vu} but is on-page in "
+                                    f"{dead_after[0]} (E11 — corpse, or an error?)")
+
+
+def check_temporal_order(scenes_fm: dict, rep: Report) -> None:
+    """R4 (mechanical): along the `follows` chain, in_world_time must not move
+    backwards. Only enforced when both times parse as numbers, and only warned —
+    flashbacks are legal, so a human confirms."""
+    for sid, fm in scenes_fm.items():
+        refs = fm.get("refs") or {}
+        prev = refs.get("follows") if isinstance(refs, dict) else None
+        if not (isinstance(prev, str) and prev in scenes_fm):
+            continue
+        a = _num_time(fm.get("in_world_time"))
+        b = _num_time(scenes_fm[prev].get("in_world_time"))
+        if a is not None and b is not None and a < b:
+            rep.warn(f"{sid}.md", f"R4 in_world_time {fm.get('in_world_time')} precedes {prev}'s "
+                                  f"{scenes_fm[prev].get('in_world_time')} — flashback, or a timeline break (E4)?")
+
+
 def lint(root: Path, schema_dir: Path) -> Report:
     rep = Report()
     reg = build_registry(root, rep)
@@ -173,7 +240,8 @@ def lint(root: Path, schema_dir: Path) -> Report:
     char_schema = load_schema(schema_dir, "character.schema.json")
     scene_schema = load_schema(schema_dir, "scene.schema.json")
 
-    # --- characters: schema only -------------------------------------------
+    # --- characters: schema + collect for R3 -------------------------------
+    chars: dict[str, tuple[dict, str]] = {}
     cdir = root / "canon" / "characters"
     for f in sorted(cdir.glob("*.md")) if cdir.exists() else []:
         if is_template(f):
@@ -183,15 +251,20 @@ def lint(root: Path, schema_dir: Path) -> Report:
         except ValueError as exc:
             rep.error(f.name, str(exc))
             continue
-        if fm and char_schema:
+        if not fm:
+            continue
+        if char_schema:
             for err in sorted(char_schema.iter_errors(fm), key=str):
                 rep.error(f.name, f"schema: {err.message}")
+        if isinstance(fm.get("id"), str):
+            chars[fm["id"]] = (fm, f.name)
 
     # --- scenes: schema + R1 + R9 + R12 ------------------------------------
     sdir = root / "scenes"
     scenes = [f for f in sorted(sdir.glob("*.md")) if not is_template(f)] if sdir.exists() else []
     if not scenes:
         rep.warn("scenes/", "no scene files found (only templates?) — nothing to lint")
+    scenes_fm: dict[str, dict] = {}
 
     def resolve(where: str, kind: str, value) -> None:
         """R1: value(s) must exist in the registry for `kind`."""
@@ -222,6 +295,8 @@ def lint(root: Path, schema_dir: Path) -> Report:
         sid = fm.get("id", "")
         if isinstance(sid, str) and sid and sid not in f.stem:
             rep.warn(where, f"id {sid} not reflected in filename")
+        if isinstance(sid, str) and sid:
+            scenes_fm[sid] = fm
 
         # R1 — entity existence
         resolve(where, "LOC", fm.get("location"))
@@ -257,6 +332,10 @@ def lint(root: Path, schema_dir: Path) -> Report:
                 rep.error(where, f"R12 empty {field}")
             elif field == "outcome" and val in ("nothing", "nothing changed", "nothing changes"):
                 rep.error(where, "R12 outcome is 'nothing changed' — scene is inert")
+
+    # --- R3 / R4 — interval and temporal integrity across the whole story ---
+    check_intervals(chars, scenes_fm, rep)
+    check_temporal_order(scenes_fm, rep)
 
     return rep
 

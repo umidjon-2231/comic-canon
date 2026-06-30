@@ -142,9 +142,10 @@ See [`QUICKSTART.md`](./QUICKSTART.md) for the copy-paste version, and
 - v0.3 — ✅ **shipped:** a context-packer (`tools/pack.py`) that auto-assembles per-scene canon
   from the frontmatter IDs, plus a provider-agnostic `agents/` layer (works with any AI) covering
   the full loop — `scene-drafter`, `continuity-reviewer`, `canon-keeper`.
+- v0.3.1 — ✅ **shipped:** linter R3/R4 (interval integrity + appearance/death gating + temporal
+  order) and a `tests/` suite (positive + a negative per rule) wired into CI.
 - v0.4 — visual-canon pack: reference-image manifest + prompt-DNA injector for panel gen.
-- later — deeper linting (R3 validity windows, R4 temporal order) so the reviewer leans less on a
-  human.
+- later — the prose half of R3 (does a scene *lean on* a stale fact?) still needs a human.
 
 PRs welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md). Keep canon and narrative separate; keep
 IDs stable; never let a scene invent a fact.
